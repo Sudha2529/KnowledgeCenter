@@ -1,0 +1,81 @@
+CREATE SCHEMA `knowledgecenter` ;
+CREATE TABLE `knowledgecenter`.`customer` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `company_name` VARCHAR(100) NULL,
+  PRIMARY KEY (`id`));
+  
+ 
+CREATE TABLE `knowledgecenter`.`knowledgebase` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `fk_customer_id` INT NULL,
+  `fk_category_id` INT NULL,
+  `knowledgeDescription` VARCHAR(100) NULL,
+  `supportedLanguage` VARCHAR(100) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_customer_id_idx` (`fk_customer_id` ASC),
+  CONSTRAINT `fk_customer_id`
+    FOREIGN KEY (`fk_customer_id`)
+    REFERENCES `knowledgecenter`.`customer` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+	
+CREATE TABLE `knowledgecenter`.`category` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `categoryName` VARCHAR(100) NULL,
+  `knowledgebase_id` INT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_knowledgebase_id_idx` (`knowledgebase_id` ASC),
+  CONSTRAINT `fk_knowledgebase_id`
+    FOREIGN KEY (`knowledgebase_id`)
+    REFERENCES `knowledgecenter`.`knowledgebase` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+	
+CREATE TABLE `knowledgecenter`.`documenttype` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `Type` VARCHAR(100) NULL,
+  PRIMARY KEY (`id`));
+
+ 
+
+ALTER TABLE `knowledgecenter`.`documenttype` 
+CHANGE COLUMN `Type` `Type` INT NULL DEFAULT NULL ,
+ADD INDEX `fk_documentType_id_idx` (`Type` ASC);
+;
+ALTER TABLE `knowledgecenter`.`documenttype` 
+ADD CONSTRAINT `fk_documentType_id`
+  FOREIGN KEY (`Type`)
+  REFERENCES `knowledgecenter`.`documenttype` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
+ 
+CREATE TABLE `knowledgecenter`.`document` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `type` VARCHAR(45) NULL,
+  `category_id` INT NULL,
+  `content` VARCHAR(100) NULL,
+  `title` VARCHAR(100) NULL,
+  `question` VARCHAR(100) NULL,
+  `answer` VARCHAR(100) NULL,
+  PRIMARY KEY (`id`));
+
+ 
+ALTER TABLE `knowledgecenter`.`document` 
+ADD INDEX `fk_categoryid_idx` (`category_id` ASC);
+;
+ALTER TABLE `knowledgecenter`.`document` 
+ADD CONSTRAINT `fk_categoryid`
+  FOREIGN KEY (`category_id`)
+  REFERENCES `knowledgecenter`.`category` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
+ALTER TABLE `knowledgecenter`.`document` 
+ADD COLUMN `locale` VARCHAR(50) NULL AFTER `answer`;
+
+ALTER TABLE document ADD createdts TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+
